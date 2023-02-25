@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Boost")
 	float BoostRegenDuration = 5.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Boost")
+	bool DoubleSpeedBoost = false;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnBoostStarted OnBoostStarted;
 
@@ -66,6 +69,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SnapClutterToGround();
+
+	UFUNCTION(BlueprintCallable)
+	void DoubleSpeedPickup();
+
+	UFUNCTION()
+	void FinishBoost();
 
 	FVector2D WindInput2D;
 	bool bWindWantsBoost;

@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float DeadFadeOutDelay = 3.0f;
 
+	UPROPERTY(EditDefaultsOnly)
+	bool Boosted = false;
+
 	UPROPERTY(Transient)
 	TArray<AActor*> ViewTargets;
 

@@ -41,6 +41,7 @@ void ATWAController::Tick(float deltaTime)
 			WindBoostBurnedOutDuration = FMath::Max(WindBoostBurnedOutDuration - deltaTime, 0.0f);
 		}
 
+
 		float windBoostElapsedTime = Utils::ElapsedTime(WindBoostStartedTime);
 
 		if (bWindWantsBoost && BoostCurveMultiplier != nullptr && windBoostElapsedTime > BoostCurveMultiplier->FloatCurve.GetLastKey().Time)
@@ -68,7 +69,13 @@ void ATWAController::Tick(float deltaTime)
 			windInputRatio = WindInput2D.Size();
 		}
 
-		float targetWindSpeed = windInputRatio * windBoostRatio;
+		float targetWindSpeed = 0;
+		if (DoubleSpeedBoost) {
+			targetWindSpeed = windInputRatio * windBoostRatio * 2;
+		}
+		else {
+			targetWindSpeed = windInputRatio * windBoostRatio;
+		}
 		WindSpeed = Utils::Approach(WindSpeed, targetWindSpeed, WindSpeedApproach, deltaTime);
 		
 		float windAngleRad = FMath::DegreesToRadians(WindAngle);
@@ -189,6 +196,19 @@ void ATWAController::BoostWindReleased()
 		WindBoostBurnedOutDuration = FMath::Max(MapClamped(Utils::ElapsedTime(WindBoostStartedTime), 0.0f, BoostCurveMultiplier->FloatCurve.GetLastKey().Time, 0.0f, BoostRegenDuration), MinimumReboostInterval);
 		OnBoostEnded.Broadcast(MapClamped(Utils::ElapsedTime(WindBoostStartedTime), 0.0f, BoostCurveMultiplier->FloatCurve.GetLastKey().Time, 0.0f, BoostRegenDuration));
 	}
+}
+
+void ATWAController::DoubleSpeedPickup()
+{
+	UE_LOG(LogTemp, Warning, TEXT("WE MADE IT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	DoubleSpeedBoost = true;
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ATWAController::FinishBoost, 3, false);
+}
+
+void ATWAController::FinishBoost()
+{
+	DoubleSpeedBoost = false;
 }
 
 FBox ATWAController::GetWindClutterLimits() const
